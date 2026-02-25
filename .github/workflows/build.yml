@@ -17,22 +17,14 @@ jobs:
       - name: Copy repo
         uses: actions/checkout@v4
 
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install deps
-        run: npm ci
-
       - name: Lint
         run: npm run lint
 
       - name: Type check
         run: npm run typecheck
+
+      - name: Install deps
+        run: npm ci
 
         # upload artefact (node_modules)
       - name: Upload node_modules
