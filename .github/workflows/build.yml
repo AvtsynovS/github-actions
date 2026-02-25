@@ -1,0 +1,17 @@
+name: Build Project
+
+on:
+  push:
+  # pull_request:
+  #   types: [opened]
+
+jobs:
+  # jobs name (any)
+  install-dependence:
+    # OS from virtual machine GitHub
+    runs-on: windows-latest
+    steps:
+      - name: Install deps
+        run: npm i
+      - name: success message
+        run: echo "Dependence install successfully"
