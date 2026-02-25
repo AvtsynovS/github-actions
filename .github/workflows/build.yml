@@ -56,3 +56,5 @@ jobs:
 
       - name: Build project
         run: npm run build
+        env:
+          PATH: ${{ github.workspace }}/node_modules/.bin:${PATH}
