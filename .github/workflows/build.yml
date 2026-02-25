@@ -2,18 +2,59 @@ name: Build Project
 
 on:
   push:
+    branches: [main, develop]
   # pull_request:
   #   types: [opened]
 
 jobs:
   # jobs name (any)
-  install-dependence:
+  install_dependency:
     # OS from virtual machine GitHub
     runs-on: windows-latest
+    outputs:
+      artifact-name: dependency
     steps:
-      - name: copy repo
+      - name: Copy repo
         uses: actions/checkout@v4
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install deps
         run: npm ci
-      - name: success message
-        run: echo "Dependence install successfully"
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+        # upload artefact (node_modules)
+      - name: Upload node_modules
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency
+          path: node_modules
+
+  build:
+    # depends on install_dependency job
+    needs: install_dependency
+    runs-on: windows-latest
+    steps:
+      - name: Copy repo
+        uses: actions/checkout@v4
+
+        # Use artefact (node_modules from cache)
+      - name: Download node_modules
+        uses: actions/download-artifact@v4
+        with:
+          name: dependency
+          path: node_modules
+
+      - name: Build project
+        run: npm run build
