@@ -11,8 +11,6 @@ jobs:
   install_dependency:
     # OS from virtual machine GitHub
     runs-on: ubuntu-latest
-    outputs:
-      artifact-name: dependency
     steps:
       - name: Copy repo
         uses: actions/checkout@v4
@@ -32,13 +30,6 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
-        # upload artefact (node_modules)
-      - name: Upload node_modules
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency
-          path: node_modules
-
   build:
     # depends on install_dependency job
     needs: install_dependency
@@ -52,14 +43,8 @@ jobs:
         with:
           node-version: 22.14.0
 
-        # Use artefact (node_modules from cache)
-      - name: Download node_modules
-        uses: actions/download-artifact@v4
-        with:
-          name: dependency
-          path: node_modules
+      - name: Install deps
+        run: npm ci
 
       - name: Build project
         run: npm run build
-        env:
-          PATH: ${{ github.workspace }}/node_modules/.bin:${PATH}
