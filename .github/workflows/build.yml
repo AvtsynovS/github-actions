@@ -11,7 +11,9 @@ jobs:
     # OS from virtual machine GitHub
     runs-on: windows-latest
     steps:
+      - name: copy repo
+        uses: actions/checkout@v4
       - name: Install deps
-        run: npm i
+        run: npm ci
       - name: success message
         run: echo "Dependence install successfully"
